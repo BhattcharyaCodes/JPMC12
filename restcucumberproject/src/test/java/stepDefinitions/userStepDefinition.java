@@ -19,8 +19,7 @@ public class userStepDefinition {
 
     @Given("users exist in the database")
     public void usersExistInTheDatabase() throws Throwable {
-        //Write code here that sets up users in the database in a testing server. For example, code to start a fake JSON DB server can go here.
-        System.out.println("Database Seeded: You can now start running your tests.");
+        System.out.println("Database Seeded: You can now start running your tests for /user API.");
     }
 
 
@@ -37,21 +36,80 @@ public class userStepDefinition {
         assertThat(response.statusCode(), equalTo(200));
     }
 
+
     @Given("a user exists with a valid id")
     public void aUserExistsWithAValidId() {
-        //Write code here that sets up users in the database with valid test ids
         System.out.println("Database Seeded: You can now start running your tests.");
     }
 
-    @Then("I should see the user's name as {string}")
-    public void iShouldSeeTheUserSNameAs(String arg0) {
-    }
-
-    @And("I perform GET operation for userId {string}")
+    @When("I perform GET operation for {string} ")
     public void iPerformGETOperationForUserId(String userId) {
-        response = RestAssuredExtension.GetOps(String.format("/users/%s", userId));
+        response = RestAssuredExtension.GetOps(String.format(userId));
+          }
+
+    @Then("I should see the user's name as {string}")
+    public void iShouldSeeTheUserSNameAs(String userId) {
         assert response != null;
         assertThat(response.getBody().jsonPath().get("name"), Matchers.<Object>equalTo("Leanne Graham"));
+
+    }
+
+    @Given("a user exists with a valid email")
+    public void usersEmailExistInTheDatabase() throws Throwable {
+        System.out.println("Testing with a valid email");
+    }
+
+
+    @When("I perform GET operation for the email {string}")
+    public void iPerformGETOperationForEmail(String url) throws Throwable {
+        response = RestAssuredExtension.GetOps(String.format(url));
+        assert response != null;
+        ResponseBody body = response.getBody();
+    }
+
+    @Then("I should see the user's name for the email as {string}")
+    public void iShouldGetUserNameByEmail(String name) throws Throwable {
+        assertThat(response.statusCode(), equalTo(200));
+        assertThat(response.getBody().jsonPath().get("name").toString(), Matchers.<Object>equalTo(name));
+    }
+
+    @Given("a user exists with a valid username")
+    public void usersUserNameExistInTheDatabase() throws Throwable {
+        System.out.println("Testing with valid username");
+    }
+
+
+    @When("I perform GET operation for the username {string}")
+    public void iPerformGETOperationForUserName(String url) throws Throwable {
+        response = RestAssuredExtension.GetOps(url);
+        assert response != null;
+    }
+
+    @Then("I should see the user's name for the username as {string}")
+    public void iShouldGetUserNameByUserName(String name) throws Throwable {
+        ResponseBody body = response.getBody();
+
+        assertThat(response.statusCode(), equalTo(200));
+        assertThat(body.jsonPath().get("name").toString(), Matchers.<Object>equalTo(name));
+    }
+
+    @Given("only valid users exists")
+    public void aUserWithInValidId() {
+        // a user exists with an invalid id
+        System.out.println("Testing with invalid userId");
+    }
+
+    @When("I perform GET operation for invalid id {string} with userId {int}")
+    public void iPerformGETOperationFor(String url, int userId) throws Throwable {
+        response = RestAssuredExtension.GetOps(String.format("/users/%s", userId));
+        assert response == null;
+        ResponseBody body = response.getBody();
+    }
+    @Then("I should get an null response")
+    public void iShouldSeeTheUserSNameAs() {
+        assert response == null;
+    }
+
 
     }
 }
